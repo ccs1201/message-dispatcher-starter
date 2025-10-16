@@ -1,4 +1,4 @@
-package br.com.messagedispatcher.beandiscover;
+package br.com.messagedispatcher.handlerdiscover;
 
 import java.lang.reflect.Method;
 

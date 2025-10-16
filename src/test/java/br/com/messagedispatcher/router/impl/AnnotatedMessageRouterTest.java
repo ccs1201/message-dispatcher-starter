@@ -4,7 +4,7 @@ import br.com.messagedispatcher.annotation.Command;
 import br.com.messagedispatcher.annotation.MessageListener;
 import br.com.messagedispatcher.annotation.Notification;
 import br.com.messagedispatcher.annotation.Query;
-import br.com.messagedispatcher.beandiscover.MessageDispatcherAnnotatedHandlerDiscover;
+import br.com.messagedispatcher.handlerdiscover.MessageDispatcherAnnotatedHandlerDiscover;
 import br.com.messagedispatcher.exceptions.MessageHandlerNotFoundException;
 import br.com.messagedispatcher.exceptions.MessageRouterMissingHeaderException;
 import br.com.messagedispatcher.util.context.MessageDispatcherContextHolder;

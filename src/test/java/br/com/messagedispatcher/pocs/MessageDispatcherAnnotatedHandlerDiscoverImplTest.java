@@ -1,6 +1,6 @@
 package br.com.messagedispatcher.pocs;
 
-import br.com.messagedispatcher.beandiscover.impl.MessageDispatcherAnnotatedHandlerDiscoverImpl;
+import br.com.messagedispatcher.handlerdiscover.impl.MessageDispatcherAnnotatedHandlerDiscoverImpl;
 import br.com.messagedispatcher.exceptions.MessageHandlerNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

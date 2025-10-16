@@ -1,6 +1,6 @@
 package br.com.messagedispatcher.router.impl;
 
-import br.com.messagedispatcher.beandiscover.MessageDispatcherAnnotatedHandlerDiscover;
+import br.com.messagedispatcher.handlerdiscover.MessageDispatcherAnnotatedHandlerDiscover;
 import br.com.messagedispatcher.exceptions.MessageRouterMissingHeaderException;
 import br.com.messagedispatcher.router.MessageRouter;
 import br.com.messagedispatcher.util.context.MessageDispatcherContextHolder;
