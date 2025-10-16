@@ -35,13 +35,13 @@ public class MessageDispatcherEntityEventsListenerImpl implements MessageDispatc
 
     @Override
     public void onPostInsert(PostInsertEvent event) {
-        if (shouldPublish(event.getEntity()) && event.getEntity().getClass().getAnnotation(EntityEventsPublish.class).publishCreate())
+        if (shouldPublish(event.getEntity()) && isCreated(event))
             publish(event.getEntity(), Action.CREATED);
     }
 
     @Override
     public void onPostUpdate(PostUpdateEvent event) {
-        if (shouldPublish(event.getEntity()) && event.getEntity().getClass().getAnnotation(EntityEventsPublish.class).publishUpdate())
+        if (shouldPublish(event.getEntity()) && isUpdated(event))
             publish(event.getEntity(), Action.UPDATED);
     }
 
@@ -50,15 +50,23 @@ public class MessageDispatcherEntityEventsListenerImpl implements MessageDispatc
         return true;
     }
 
-    private boolean shouldPublish(Object entity) {
-        return entity.getClass().isAnnotationPresent(EntityEventsPublish.class);
-    }
-
     private void publish(Object entity, Action action) {
         publisher.sendEvent(exchange, routingKey, entity);
         if (log.isDebugEnabled()) {
             log.debug("Event Published Entity: {} {} ", entity.getClass().getSimpleName(), action);
         }
+    }
+
+    private boolean shouldPublish(Object entity) {
+        return entity.getClass().isAnnotationPresent(EntityEventsPublish.class);
+    }
+
+    private static boolean isUpdated(PostUpdateEvent event) {
+        return event.getEntity().getClass().getAnnotation(EntityEventsPublish.class).publishUpdate();
+    }
+
+    private static boolean isCreated(PostInsertEvent event) {
+        return event.getEntity().getClass().getAnnotation(EntityEventsPublish.class).publishCreate();
     }
 
     enum Action {

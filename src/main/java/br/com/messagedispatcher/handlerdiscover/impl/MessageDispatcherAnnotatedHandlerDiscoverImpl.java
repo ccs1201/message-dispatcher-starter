@@ -1,11 +1,11 @@
-package br.com.messagedispatcher.beandiscover.impl;
+package br.com.messagedispatcher.handlerdiscover.impl;
 
 import br.com.messagedispatcher.annotation.Command;
 import br.com.messagedispatcher.annotation.Event;
 import br.com.messagedispatcher.annotation.MessageHandler;
 import br.com.messagedispatcher.annotation.Notification;
 import br.com.messagedispatcher.annotation.Query;
-import br.com.messagedispatcher.beandiscover.MessageDispatcherAnnotatedHandlerDiscover;
+import br.com.messagedispatcher.handlerdiscover.MessageDispatcherAnnotatedHandlerDiscover;
 import br.com.messagedispatcher.exceptions.MessageHandlerDuplicatedInputParameterException;
 import br.com.messagedispatcher.exceptions.MessageHandlerMultipleInputParametersException;
 import br.com.messagedispatcher.exceptions.MessageHandlerNotFoundException;

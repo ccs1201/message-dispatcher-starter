@@ -1,4 +1,4 @@
-package br.com.messagedispatcher.beandiscover.impl;
+package br.com.messagedispatcher.handlerdiscover.impl;
 
 import br.com.messagedispatcher.annotation.MessageListener;
 import org.springframework.context.ApplicationContext;

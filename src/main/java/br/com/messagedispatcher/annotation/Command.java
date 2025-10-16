@@ -26,7 +26,7 @@ import static br.com.messagedispatcher.constants.MessageDispatcherConstants.Hand
  * <p>
  * Devem ser validados antes de serem executados
  * <p>
- * Podem ser rejeitados, gerar erro ou produzir eventos
+ * Podem ser rejeitados, gerar erro ou produzir outros eventos
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
