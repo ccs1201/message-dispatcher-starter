@@ -4,19 +4,75 @@ public final class MessageDispatcherConstants {
     private MessageDispatcherConstants() {
     }
 
-    public static class MessageDispatcherHeaders {
-        private MessageDispatcherHeaders() {
-        }
+    public enum Headers {
+        HANDLER_TYPE("handler-type"),
+        MESSAGE_TIMESTAMP("timestamp"),
+        MESSAGE_SOURCE("remoteService"),
+        BODY_TYPE("body-type"),
+        RESPONSE_FROM("response-from"),
+        RESPONSE_TIME_STAMP("response-timestamp"),
+        EXCEPTION_MESSAGE("exception-message"),
+        EXCEPTION_ROOT_CAUSE("exception-root-cause"),
+        FAILED_AT("failed-at");
 
         private static final String HEADER_PREFIX = "x-message-dispatcher-";
-        public static final String MESSAGE_TYPE = HEADER_PREFIX + "message-type";
-        public static final String MESSAGE_TIMESTAMP = HEADER_PREFIX + "timestamp";
-        public static final String MESSAGE_SOURCE = HEADER_PREFIX + "remoteService";
-        public static final String BODY_TYPE = HEADER_PREFIX + "body-type";
-        public static final String RESPONSE_FROM = HEADER_PREFIX + "response-from";
-        public static final String RESPONSE_TIME_STAMP = HEADER_PREFIX + "response-timestamp";
-        public static final String EXCEPTION_MESSAGE = HEADER_PREFIX + "exception-message";
-        public static final String EXCEPTION_ROOT_CAUSE = HEADER_PREFIX + "exception-root-cause";
-        public static final String FAILED_AT = HEADER_PREFIX + "failed-at";
+        private final String headerName;
+
+        Headers(String headerName) {
+            this.headerName = HEADER_PREFIX + headerName;
+        }
+
+        public String getHeaderName() {
+            return headerName;
+        }
+
+        @Override
+        public String toString() {
+            return headerName;
+        }
+    }
+
+    /**
+     * Enum que define os tipos de handlers suportados.
+     * Enum that defines the supported handler types.
+     */
+    public enum HandlerType {
+        COMMAND,
+        QUERY,
+        NOTIFICATION,
+        EVENT
+    }
+
+    public enum Exchange {
+        /**
+         * Topic exchange.
+         */
+        TOPIC("topic"),
+        /**
+         * Direct Echange
+         */
+        DIRECT("direct"),
+        /**
+         * Fanout exchange.
+         */
+        FANOUT("fanout"),
+        /**
+         * Headers exchange.
+         */
+        HEADERS("headers"),
+        /**
+         * Consistent Hash exchange.
+         */
+        CONSISTENT_HASH("x-consistent-hash");
+
+        private final String type;
+
+        Exchange(String type) {
+            this.type = type;
+        }
+
+        public String getType() {
+            return type;
+        }
     }
 }

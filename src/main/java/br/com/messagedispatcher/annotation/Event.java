@@ -1,14 +1,19 @@
 package br.com.messagedispatcher.annotation;
 
-import br.com.messagedispatcher.model.MessageType;
-import org.springframework.core.annotation.AliasFor;
-
 import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
+import static br.com.messagedispatcher.constants.MessageDispatcherConstants.HandlerType;
 
 /**
+ * <h3>
+ * Anotação para marcar métodos que processam mensagens do tipo Event.</br>
+ * Annotation to mark methods that handle Event messages.
+ * </h3>
+ * <p>
  * Eventos não possuem retorno, recebem uma notificação e executam alguma ação.
  * <p>
  * Representam fatos que já aconteceram no sistema
@@ -21,11 +26,9 @@ import java.lang.annotation.RetentionPolicy;
  * <p>
  * Podem ser usados para sincronizar diferentes modelos de dados
  */
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@MessageHandler(messageType = MessageType.EVENT)
 @Documented
+@MessageHandler(handlerType = HandlerType.EVENT)
 public @interface Event {
-
-    @AliasFor(annotation = MessageHandler.class)
-    Class<?> kind() default Object.class;
 }

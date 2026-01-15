@@ -17,6 +17,10 @@
 package br.com.messagedispatcher.config.properties;
 
 import br.com.messagedispatcher.config.MessageDispatcherAutoConfig;
+import br.com.messagedispatcher.config.rabbitmq.RabbitTemplateAutoConfig;
+import br.com.messagedispatcher.constants.MessageDispatcherConstants;
+import br.com.messagedispatcher.constants.MessageDispatcherConstants.Exchange;
+import br.com.messagedispatcher.exceptions.MessageDispatcherBeanResolutionException;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -29,6 +33,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Arrays;
+import java.util.Map;
+
+import static java.util.Objects.isNull;
 
 
 /**
@@ -82,7 +89,7 @@ import java.util.Arrays;
  * @since 09/05/2025
  */
 
-@AutoConfigureBefore(MessageDispatcherAutoConfig.class)
+@AutoConfigureBefore({MessageDispatcherAutoConfig.class, RabbitTemplateAutoConfig.class})
 @Component("messageDispatcherProperties")
 @ConfigurationProperties(prefix = "message.dispatcher")
 @Validated
@@ -92,20 +99,29 @@ public class MessageDispatcherProperties {
     public void init() {
         final Logger log = LoggerFactory.getLogger(MessageDispatcherProperties.class);
         // Se não foram configurados, criar nomes padrão para DLQ
-        if (deadLetterQueueName == null) {
+        if (isNull(deadLetterQueueName)) {
             deadLetterQueueName = queueName.concat(".dlq");
         }
-        if (deadLetterExchangeName == null) {
+        if (isNull(deadLetterExchangeName)) {
             deadLetterExchangeName = exchangeName.replace(".ex", ".dlx");
         }
 
-        if (deadLetterRoutingKey == null) {
+        if (isNull(deadLetterRoutingKey)) {
             deadLetterRoutingKey = deadLetterQueueName;
         }
 
-        if (routingKey == null) {
+        if (isNull(routingKey)) {
             routingKey = queueName;
         }
+
+        if (this.exchangeType == MessageDispatcherConstants.Exchange.CONSISTENT_HASH) {
+            if (isNull(this.exchangeConsistentHashArguments)) {
+                throw new MessageDispatcherBeanResolutionException("Quando a exchange é do tipo ConsistenHash é " +
+                        "obrigatório informar o argumento exchangeConsistentHashArguments");
+            }
+        }
+
+        this.queueName = this.queueName.concat(".inbox");
 
         getMappedHeaders();
 
@@ -145,7 +161,12 @@ public class MessageDispatcherProperties {
     /**
      * Tipo da exchange. Padrão é 'topic'
      */
-    private String exchangeType = "topic";
+    private Exchange exchangeType = MessageDispatcherConstants.Exchange.TOPIC;
+
+    /**
+     * Argumentos da exchange obrigatório quando o type = {@code Types.exchange.CONSISTENT_HASH} . Padrão é null
+     */
+    private Map<String, Object> exchangeConsistentHashArguments;
 
     /**
      * Nome da fila RabbitMQ. Se não configurado, usa o nome da aplicação
@@ -177,6 +198,16 @@ public class MessageDispatcherProperties {
      * Nome da exchange de dead letter. Padrão é '{exchange}.dlq'
      */
     private String deadLetterExchangeName;
+
+    /**
+     * Tipo da exchange de dead letter. Padrão é 'topic'
+     */
+    private Exchange deadLetterExchangeType = MessageDispatcherConstants.Exchange.TOPIC;
+
+    /**
+     * Argumentos da exchange de dead letter obrigatório quando o type = {@code Types.exchange.CONSISTENT_HASH} . Padrão é null
+     */
+    private Map<String, Object> deadLetterExchangeConsistentHashArguments;
 
     /**
      * Nome da fila de dead letter. Padrão é '{queue}.dlq'
@@ -232,6 +263,19 @@ public class MessageDispatcherProperties {
      */
     private boolean returnExceptions = true;
 
+    /**
+     * Indica se o listener padrão deve ser ativado. Padrão é true
+     */
+    private boolean defaultListenerEnabled = true;
+
+    public boolean isDefaultListenerEnabled() {
+        return defaultListenerEnabled;
+    }
+
+    public void setDefaultListenerEnabled(boolean defaultListenerEnabled) {
+        this.defaultListenerEnabled = defaultListenerEnabled;
+    }
+
     public long getReplyTimeOut() {
         return replyTimeOut;
     }
@@ -256,12 +300,12 @@ public class MessageDispatcherProperties {
         this.exchangeName = exchangeName.trim();
     }
 
-    public String getExchangeType() {
+    public Exchange getExchangeType() {
         return exchangeType;
     }
 
-    public void setExchangeType(String exchangeType) {
-        this.exchangeType = exchangeType.trim();
+    public void setExchangeType(Exchange exchangeType) {
+        this.exchangeType = exchangeType;
     }
 
     public String getRoutingKey() {
@@ -461,6 +505,30 @@ public class MessageDispatcherProperties {
 
     public int maxConsumers() {
         return Integer.parseInt(getConcurrency().split("-")[1]);
+    }
+
+    public Exchange getDeadLetterExchangeType() {
+        return deadLetterExchangeType;
+    }
+
+    public void setDeadLetterExchangeType(Exchange deadLetterExchangeType) {
+        this.deadLetterExchangeType = deadLetterExchangeType;
+    }
+
+    public Map<String, Object> getExchangeConsistentHashArguments() {
+        return exchangeConsistentHashArguments;
+    }
+
+    public void setExchangeConsistentHashArguments(Map<String, Object> exchangeConsistentHashArguments) {
+        this.exchangeConsistentHashArguments = exchangeConsistentHashArguments;
+    }
+
+    public Map<String, Object> getDeadLetterExchangeConsistentHashArguments() {
+        return deadLetterExchangeConsistentHashArguments;
+    }
+
+    public void setDeadLetterExchangeConsistentHashArguments(Map<String, Object> deadLetterExchangeConsistentHashArguments) {
+        this.deadLetterExchangeConsistentHashArguments = deadLetterExchangeConsistentHashArguments;
     }
 
     /**

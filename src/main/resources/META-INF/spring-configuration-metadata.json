@@ -22,10 +22,17 @@
     },
     {
       "name": "message.dispatcher.exchange-type",
-      "type": "java.lang.String",
+      "type": "br.com.messagedispatcher.constants.Types.Exchange",
       "description": "Tipo da exchange RabbitMQ.",
       "sourceType": "br.com.messagedispatcher.config.properties.MessageDispatcherProperties",
       "defaultValue": "topic"
+    },
+    {
+      "name": "message.dispatcher.exchangeConsistentHashArguments",
+      "type": "java.util.Map<java.lang.String,java.lang.Object>",
+      "description": "Argumentos para o hash da exchange. Quando tipo for consistent-hash, é obrigatório",
+      "sourceType": "br.com.messagedispatcher.config.properties.MessageDispatcherProperties",
+      "defaultValue": {}
     },
     {
       "name": "message.dispatcher.routing-key",
@@ -105,6 +112,27 @@
       "defaultValue": "message.dispatcher.dlx"
     },
     {
+      "name": "message.dispatcher.dead-letter-exchange-type",
+      "type": "br.com.messagedispatcher.constants.Types.Exchange",
+      "description": "Tipo da exchange de mensagens de erro.",
+      "sourceType": "br.com.messagedispatcher.config.properties.MessageDispatcherProperties",
+      "defaultValue": "topic"
+    },
+    {
+      "name": "message.dispatcher.deadLetterExchangeConsistentHashArguments",
+      "type": "java.util.Map<java.lang.String,java.lang.Object>",
+      "description": "Argumentos para o hash da exchange de mensagens de erro. Quando tipo for consistent-hash, é obrigatório",
+      "sourceType": "br.com.messagedispatcher.config.properties.MessageDispatcherProperties",
+      "defaultValue": {}
+    },
+    {
+      "name": "message.dispatcher.dead-letter-exchange-type",
+      "type": "br.com.messagedispatcher.constants.MessageDispatcherConstants.",
+      "description": "Tipo da exchange de mensagens de erro.",
+      "sourceType": "br.com.messagedispatcher.config.properties.MessageDispatcherProperties",
+      "defaultValue": "topic"
+    },
+    {
       "name": "message.dispatcher.dead-letter-routing-key",
       "type": "java.lang.String",
       "description": "Routing key para mensagens de erro.",
@@ -149,11 +177,10 @@
     {
       "name": "message.dispatcher.reply-timeout",
       "type": "java.lang.long",
-      "description": "Tempo máximo de espera por uma resposta em mile segundos. Padrão é 10_000",
+      "description": "Tempo máximo de espera por uma resposta em Milisegundos. Padrão é 10_000",
       "sourceType": "br.com.messagedispatcher.config.properties.MessageDispatcherProperties",
       "defaultValue": 10000
     },
-
     {
       "name": "message.dispatcher.returnExceptions",
       "type": "java.lang.boolean",
@@ -173,6 +200,55 @@
       "description": "Implementação de MessageRouter que deve ser usada no MessageDispatcherListener.",
       "sourceType": "br.com.messagedispatcher.router.MessageRouter",
       "defaultValue": "annotated"
+    },
+    {
+      "name": "message.dispatcher.default-listener-enable",
+      "type": "java.lang.Boolean",
+      "description": "Habilita o MessageDispatcherListener padrão.",
+      "sourceType": "br.com.messagedispatcher.config.properties.MessageDispatcherProperties",
+      "defaultValue": true
+    },
+    {
+      "name": "message.dispatcher.logging.messagerouter.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Habilita o logging via spring AOP do MessageRouter.",
+      "sourceType": "br.com.messagedispatcher.config.properties.MessageDispatcherLoggingProperties",
+      "defaultValue": true
+    },
+    {
+      "name": "message.dispatcher.defaultListenerEnabled",
+      "type": "java.lang.Boolean",
+      "description": "Habilita o MessageDispatcherListener padrão. Você pode querer desabilitar o listener padrão em alguns cenários, como por exemplo quando a aplicação for somente um produtor e não precisa processar mensagens de outras aplicações. Neste não serão criadas as filas par a aplicação (fila de entrada e dlq) nem os bindings com a exchange.",
+      "sourceType": "br.com.messagedispatcher.config.properties.EntityEventsProperties",
+      "defaultValue": true
+    },
+    {
+      "name": "message.dispatcher.entity-events.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Habilita a publicação de eventos de entidades através do MessageDispatcherEntityEventsListener.",
+      "sourceType": "br.com.messagedispatcher.config.properties.EntityEventsProperties",
+      "defaultValue": false
+    },
+    {
+      "name": "message.dispatcher.entity-events.routing-key",
+      "type": "java.lang.String",
+      "description": "Routing key para mensagens de eventos de entidades.",
+      "sourceType": "br.com.messagedispatcher.config.properties.EntityEventsProperties",
+      "defaultValue": "${spring.application.name}.entity-events"
+    },
+    {
+      "name": "message.dispatcher.entity-events.exchange",
+      "type": "java.lang.String",
+      "description": "Nome da exchange de eventos de entidades.",
+      "sourceType": "br.com.messagedispatcher.config.properties.EntityEventsProperties",
+      "defaultValue": "${spring.application.name}.entity-events"
+    },
+    {
+      "name": "message.dispatcher.entity-events.exchange-type",
+      "type": "br.com.messagedispatcher.constants.MessageDispatcherConstants.Exchange",
+      "description": "Tipo da exchange de eventos de entidades.",
+      "sourceType": "br.com.messagedispatcher.config.properties.EntityEventsProperties",
+      "defaultValue": "topic"
     }
   ],
   "hints": [

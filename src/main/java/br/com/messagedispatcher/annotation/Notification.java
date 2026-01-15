@@ -1,13 +1,19 @@
 package br.com.messagedispatcher.annotation;
 
-import br.com.messagedispatcher.model.MessageType;
-import org.springframework.core.annotation.AliasFor;
-
 import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import static br.com.messagedispatcher.constants.MessageDispatcherConstants.HandlerType;
 
 /**
+ * <h3>
+ * Anotação para marcar métodos que processam mensagens do tipo Notification.</br>
+ * Annotation to mark methods that handle Notification messages.
+ * </h3>
+ * <p>
  * Notificações são mensagens que avisam (notificam) sistemas sobre eventos que ocorreram
  * em outros sistemas.
  * <p>
@@ -22,11 +28,9 @@ import java.lang.annotation.RetentionPolicy;
  * <p>
  * Exemplo: OrderShipped, PaymentReceived
  */
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@MessageHandler(messageType = MessageType.NOTIFICATION)
 @Documented
+@MessageHandler(handlerType = HandlerType.NOTIFICATION)
 public @interface Notification {
-
-    @AliasFor(annotation = MessageHandler.class)
-    Class<?> kind() default Object.class;
 }

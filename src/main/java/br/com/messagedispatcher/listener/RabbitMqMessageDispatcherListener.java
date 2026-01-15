@@ -21,18 +21,20 @@ import br.com.messagedispatcher.MessageDispatcherListener;
 import br.com.messagedispatcher.exceptions.MessageDispatcherLoggerException;
 import br.com.messagedispatcher.model.MessageDispatcherRemoteInvocationResult;
 import br.com.messagedispatcher.router.MessageRouter;
-import br.com.messagedispatcher.util.EnvironmentUtils;
+import br.com.messagedispatcher.util.MessageDispatcherUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-import static br.com.messagedispatcher.constants.MessageDispatcherConstants.MessageDispatcherHeaders.*;
+import static br.com.messagedispatcher.constants.MessageDispatcherConstants.Headers.*;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
@@ -45,6 +47,8 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  * @since 09/05/2025
  */
 
+@Component
+@ConditionalOnProperty(prefix = "message.dispatcher", name = "default-listener-enabled", havingValue = "true", matchIfMissing = true)
 public class RabbitMqMessageDispatcherListener implements MessageDispatcherListener {
 
     private final Logger log = LoggerFactory.getLogger(RabbitMqMessageDispatcherListener.class);
@@ -58,7 +62,7 @@ public class RabbitMqMessageDispatcherListener implements MessageDispatcherListe
     public RabbitMqMessageDispatcherListener(MessageRouter messageRouter, ObjectMapper objectMapper) {
         this.messageRouter = messageRouter;
         this.objectMapper = objectMapper;
-        log.debug("MessageDispatcherListener inicializado com o MessageRouter: {} ", messageRouter.getClass().getSimpleName());
+        log.debug("RabbitMqMessageDispatcherListener inicializado com o MessageRouter: {} ", messageRouter.getClass().getSimpleName());
     }
 
     @RabbitListener(queues = "#{@messageDispatcherProperties.queueName}",
@@ -103,17 +107,17 @@ public class RabbitMqMessageDispatcherListener implements MessageDispatcherListe
     }
 
     private void setResponseHeaders(Message message) {
-        message.getMessageProperties().setHeader(RESPONSE_TIME_STAMP, LocalDateTime.now());
-        message.getMessageProperties().setHeader(RESPONSE_FROM, EnvironmentUtils.getAppName());
+        message.getMessageProperties().setHeader(RESPONSE_TIME_STAMP.getHeaderName(), LocalDateTime.now());
+        message.getMessageProperties().setHeader(RESPONSE_FROM.getHeaderName(), MessageDispatcherUtils.getAppName());
     }
 
     private void log(Message message) {
         try {
-            log.debug("Mensagem recebida MessageType:{} | BodyType:{} | Body:{}",
+            log.debug("Mensagem recebida HandlerType:{} | BodyType:{} | Body:{}",
                     message.getMessageProperties()
-                            .getHeaders().get(MESSAGE_TYPE),
+                            .getHeaders().get(HANDLER_TYPE.getHeaderName()),
                     message.getMessageProperties()
-                            .getHeaders().get(BODY_TYPE),
+                            .getHeaders().get(BODY_TYPE.getHeaderName()),
                     objectMapper.readValue(message.getBody(), JsonNode.class));
         } catch (IOException e) {
             throw new MessageDispatcherLoggerException("Erro ao gerar logs", e);
